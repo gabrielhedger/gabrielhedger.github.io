@@ -1,56 +1,109 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="apple-mobile-web-app-capable" content="yes">
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-        <meta name="application-name" content="cmv">
-        <meta name="description" content="CMV - The Configurable Map Viewer. Community supported open source mapping framework. Works with the Esri JavaScript API, ArcGIS Server, ArcGIS Online and more. Make it your own!">
-        <meta name="author" content="cmv.io">
-        <link rel="shortcut icon" href="./favicon.png">
-        <title>Configurable Map Viewer</title>
-        <link rel="stylesheet" type="text/css" href="https://js.arcgis.com/3.21compact/esri/css/esri.css">
-        <link rel="stylesheet" type="text/css" href="css/theme/flat/flat.css">
-        <link rel="stylesheet" type="text/css" href="css/cmv-theme-overrides.css">
-        <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-        <link rel="stylesheet" type="text/css" href="css/main.css">
-    </head>
-    <body class="cmv flat">
-        <div class="appHeader">
-            <div class="headerLogo">
-                <img alt="logo" src="images/rocket-logo.png" height="54" />
-            </div>
-            <div class="headerTitle">
-                <span id="headerTitleSpan">
-                    Configurable Map Viewer
-                </span>
-                <div id="subHeaderTitleSpan" class="subHeaderTitle">
-                    make it your own
-                </div>
-            </div>
-            <div class="search">
-                <div id='geocodeDijit'>
-                </div>
-            </div>
-            <div class="headerLinks">
-                <div id="helpDijit">
-                </div>
-            </div>
-        </div>
-        <script type="text/javascript">
-            var s = window.location.search, q = s.match(/locale=([^&]*)/i);
-            var locale = (q && q.length > 0) ? q[1] : null;
-            window.dojoConfig = {
-                locale: locale,
-                async: true
-            };
-        </script>
-        <!--[if lt IE 9]>
-            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.0.3/es5-shim.min.js"></script>
-        <![endif]-->
-        <script src="https://js.arcgis.com/3.21compact/"></script>
-        <script src="js/config/app.js"></script>
-    </body>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Getting Started - Mobile</title>
+
+<link rel="stylesheet" href="https://js.arcgis.com/3.25/esri/css/esri.css">
+
+<link rel="stylesheet" href="css/main.css">
+
+<script>var dojoConfig = { mblAlwaysHideAddressBar: true };</script>
+<script src="https://js.arcgis.com/3.25compact/"></script>
+<script>
+  require([
+    "esri/map",
+    "dojox/mobile",
+    "dojox/mobile/parser",
+    "esri/sniff",
+    "dojox/mobile/deviceTheme",
+    "dojo/dom",
+    "dijit/registry",
+    "dojo/on",
+    "dojox/mobile/ToolBarButton",
+    "dojox/mobile/View",
+    "dojox/mobile/ContentPane"
+  ],
+
+    function (Map, mobile, parser, has, dTheme, dom, registry, on) {
+      parser.parse();
+      mobile.hideAddressBar();
+
+      var map = new esri.Map("map", {
+        basemap: "hybrid",
+        center: [-90.320566, 38.615991],
+        zoom: 10,
+        slider: true
+      });
+      map.on("load", mapLoadHandler);
+
+      var resizeEvt = (window.onorientationchange !== undefined && !has('android')) ? "orientationchange" : "resize";
+      on(window, resizeEvt, resizeMap);
+
+      function mapLoadHandler(evt) {
+        resizeMap();
+        registry.byId('mapView').on('AfterTransitionIn', resizeMap);
+      }
+
+      function resizeMap() {
+        mobile.hideAddressBar();
+        adjustMapHeight();
+        map.resize();
+        map.reposition();
+      }
+
+      function adjustMapHeight() {
+        var availHeight = mobile.getScreenSize().h - registry.byId('header').domNode.clientHeight - 1;
+        if (has('iphone') || has('ipod')) {
+          availHeight += iphoneAdjustment();
+        }
+        dom.byId("map").style.height = availHeight + "px";
+      }
+
+      function iphoneAdjustment() {
+        var sz = mobile.getScreenSize();
+        if (sz.h > sz.w) { //portrait
+          //Need to add address bar height back to map
+          return screen.availHeight - window.innerHeight - 40;
+          /* 40 = height of bottom safari toolbar */
+        }
+        else { //landscape
+          //Need to react to full screen / bottom bar visible toggles
+          var _conn = on(window, 'resize', function () {
+            _conn.remove();
+            resizeMap();
+          });
+          return 0;
+        }
+      }
+    });
+</script>
+</head>
+
+<body>
+  <div id="mapView" data-dojo-type="dojox.mobile.View" data-dojo-props="selected: true">
+    <div id="header" data-dojo-type="dojox.mobile.Heading">
+      <div id="aboutButton" data-dojo-type="dojox.mobile.ToolBarButton" style="float: right;" moveTo="aboutView">
+        About
+      </div>
+    </div>
+    <div id="mapContainer" data-dojo-type="dojox.mobile.ContentPane">
+      <div id="map"></div>
+    </div>
+  </div>
+
+  <div id="aboutView" data-dojo-type="dojox.mobile.View">
+    <h1 data-dojo-type="dojox.mobile.Heading" data-dojo-props="back:'Map', moveTo:'mapView'">About</h1>
+
+    <p style="padding: 5px;">This area can contain additional information about your application.</p>
+
+  </div>
+</body>
 </html>
+
