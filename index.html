@@ -56,8 +56,8 @@
           imageParameters.transparent = true;
 
           //construct ArcGISDynamicMapServiceLayer with imageParameters from above
-          var dynamicMapServiceLayer = new ArcGISDynamicMapServiceLayer("https://gisblue.mdc.mo.gov/arcgis/rest/services/Infrastructure/MDC_Infrastructure/MapServer",
-            {"imageParameters": imageParameters});
+          var dynamicMapServiceLayer = new ArcGISDynamicMapServiceLayer("https://arcgis.cityofcapegirardeau.org:6443/arcgis/rest/services/Water_System/MapServer"
+            );
 
           map.addLayer(dynamicMapServiceLayer);
         });
