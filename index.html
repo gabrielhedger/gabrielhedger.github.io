@@ -44,16 +44,16 @@
           //ImageParameters.layerDefinitions takes an array.  The index of the array corresponds to the layer id.
           //In the sample below an element is added in the array at 3, 4, and 5 indexes.
           //T//hose array elements correspond to the layer id within the remote ArcGISDynamicMapServiceLayer
-          //var layerDefs = [];
+          var layerDefs = [];
           //layerDefs[5] = "STATE_NAME='Kansas'";
           //layerDefs[4] = "STATE_NAME='Kansas' and POP2007>25000";
           //layerDefs[3] = "STATE_NAME='Kansas' and POP2007>25000";
           imageParameters.layerDefinitions = layerDefs;
 
           //I want layers 5,4, and 3 to be visible
-          //imageParameters.layerIds = [5, 4, 3];
-          //imageParameters.layerOption = ImageParameters.LAYER_OPTION_SHOW;
-          //imageParameters.transparent = true;
+          imageParameters.layerIds = [5, 4, 3, 2, 1, 0, 6, 7, 8];
+          imageParameters.layerOption = ImageParameters.LAYER_OPTION_SHOW;
+          imageParameters.transparent = true;
 
           //construct ArcGISDynamicMapServiceLayer with imageParameters from above
           var dynamicMapServiceLayer = new ArcGISDynamicMapServiceLayer("https://gisblue.mdc.mo.gov/arcgis/rest/services/Infrastructure/MDC_Infrastructure/MapServer",
