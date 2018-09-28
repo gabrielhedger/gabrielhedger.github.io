@@ -1,109 +1,71 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-<meta name="apple-mobile-web-app-capable" content="yes">
+    
+    <meta name="viewport"
+          content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Create Map with Custom ArcGISDynamicMapServiceLayer Layer
+      Definitions</title>
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Getting Started - Mobile</title>
-
-<link rel="stylesheet" href="https://js.arcgis.com/3.25/esri/css/esri.css">
-
-<link rel="stylesheet" href="css/main.css">
-
-<script>var dojoConfig = { mblAlwaysHideAddressBar: true };</script>
-<script src="https://js.arcgis.com/3.25compact/"></script>
-<script>
-  require([
-    "esri/map",
-    "dojox/mobile",
-    "dojox/mobile/parser",
-    "esri/sniff",
-    "dojox/mobile/deviceTheme",
-    "dojo/dom",
-    "dijit/registry",
-    "dojo/on",
-    "dojox/mobile/ToolBarButton",
-    "dojox/mobile/View",
-    "dojox/mobile/ContentPane"
-  ],
-
-    function (Map, mobile, parser, has, dTheme, dom, registry, on) {
-      parser.parse();
-      mobile.hideAddressBar();
-
-      var map = new esri.Map("map", {
-        basemap: "hybrid",
-        center: [-90.320566, 38.615991],
-        zoom: 14,
-        slider: false
-      });
-      map.on("load", mapLoadHandler);
-
-      var resizeEvt = (window.onorientationchange !== undefined && !has('android')) ? "orientationchange" : "resize";
-      on(window, resizeEvt, resizeMap);
-
-      function mapLoadHandler(evt) {
-        resizeMap();
-        registry.byId('mapView').on('AfterTransitionIn', resizeMap);
+    <link rel="stylesheet"
+          href="https://js.arcgis.com/3.26/esri/css/esri.css"/>
+    <style>
+      html, body, #mapDiv {
+        padding: 0;
+        margin: 0;
+        height: 100%;
       }
 
-      function resizeMap() {
-        mobile.hideAddressBar();
-        adjustMapHeight();
-        map.resize();
-        map.reposition();
-      }
+    </style>
 
-      function adjustMapHeight() {
-        var availHeight = mobile.getScreenSize().h - registry.byId('header').domNode.clientHeight - 1;
-        if (has('iphone') || has('ipod')) {
-          availHeight += iphoneAdjustment();
-        }
-        dom.byId("map").style.height = availHeight + "px";
-      }
+    <script src="https://js.arcgis.com/3.26/"></script>
+    <script>
+      var map;
 
-      function iphoneAdjustment() {
-        var sz = mobile.getScreenSize();
-        if (sz.h > sz.w) { //portrait
-          //Need to add address bar height back to map
-          return screen.availHeight - window.innerHeight - 40;
-          /* 40 = height of bottom safari toolbar */
-        }
-        else { //landscape
-          //Need to react to full screen / bottom bar visible toggles
-          var _conn = on(window, 'resize', function () {
-            _conn.remove();
-            resizeMap();
+      require([
+        "esri/map",
+        "esri/layers/ArcGISDynamicMapServiceLayer",
+        "esri/layers/ImageParameters",
+        "dojo/domReady!"
+      ],
+        function (Map, ArcGISDynamicMapServiceLayer, ImageParameters) {
+
+          map = new Map("mapDiv", {
+            basemap: "streets",
+            center: [-90.320566, 38.615991],
+            zoom: 7
           });
-          return 0;
-        }
-      }
-    });
-</script>
-</head>
 
-<body>
-  <div id="mapView" data-dojo-type="dojox.mobile.View" data-dojo-props="selected: true">
-    <div id="header" data-dojo-type="dojox.mobile.Heading">
-      <div id="aboutButton" data-dojo-type="dojox.mobile.ToolBarButton" style="float: right;" moveTo="aboutView">
-        About
-      </div>
-    </div>
-    <div id="mapContainer" data-dojo-type="dojox.mobile.ContentPane">
-      <div id="map"></div>
-    </div>
-  </div>
+          //Use the ImageParameters to set map service layer definitions and map service visible layers before adding to the client map.
+          var imageParameters = new ImageParameters();
 
-  <div id="aboutView" data-dojo-type="dojox.mobile.View">
-    <h1 data-dojo-type="dojox.mobile.Heading" data-dojo-props="back:'Map', moveTo:'mapView'">About</h1>
+          //ImageParameters.layerDefinitions takes an array.  The index of the array corresponds to the layer id.
+          //In the sample below an element is added in the array at 3, 4, and 5 indexes.
+          //Those array elements correspond to the layer id within the remote ArcGISDynamicMapServiceLayer
+          var layerDefs = [];
+          layerDefs[5] = "STATE_NAME='Kansas'";
+          layerDefs[4] = "STATE_NAME='Kansas' and POP2007>25000";
+          layerDefs[3] = "STATE_NAME='Kansas' and POP2007>25000";
+          imageParameters.layerDefinitions = layerDefs;
 
-    <p style="padding: 5px;">This area can contain additional information about your application.</p>
+          //I want layers 5,4, and 3 to be visible
+          imageParameters.layerIds = [5, 4, 3];
+          imageParameters.layerOption = ImageParameters.LAYER_OPTION_SHOW;
+          imageParameters.transparent = true;
 
-  </div>
-</body>
+          //construct ArcGISDynamicMapServiceLayer with imageParameters from above
+          var dynamicMapServiceLayer = new ArcGISDynamicMapServiceLayer("https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Demographics/ESRI_Census_USA/MapServer",
+            {"imageParameters": imageParameters});
+
+          map.addLayer(dynamicMapServiceLayer);
+        });
+    </script>
+  </head>
+
+  <body>
+    <div id="mapDiv"></div>
+  </body>
 </html>
-
+ 
