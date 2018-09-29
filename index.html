@@ -56,10 +56,15 @@
          // imageParameters.transparent = true;
 
           //construct ArcGISDynamicMapServiceLayer with imageParameters from above
-          var dynamicMapServiceLayer = new ArcGISDynamicMapServiceLayer("https://arcgis.cityofcapegirardeau.org:6443/arcgis/rest/services/Water_System/MapServer"
-            )new ArcGISDynamicMapServiceLayer("https://arcgis.cityofcapegirardeau.org:6443/arcgis/rest/services/Meter_Routes/MapServer");
+          var dMss = new ArcGISDynamicMapServiceLayer("https://arcgis.cityofcapegirardeau.org:6443/arcgis/rest/services/Meter_Routes/MapServer"
+            );
 
           map.addLayer(dynamicMapServiceLayer);
+
+          var dynamicMapServiceLayer = new ArcGISDynamicMapServiceLayer("https://arcgis.cityofcapegirardeau.org:6443/arcgis/rest/services/Water_System/MapServer"
+            );
+
+          map.addLayer(dynamicMapServiceLayer,dMss);
         });
     </script>
   </head>
