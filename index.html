@@ -6,8 +6,9 @@
     
     <meta name="viewport"
           content="initial-scale=1, maximum-scale=1,user-scalable=no">
-    <title>Create Map with Custom ArcGISDynamicMapServiceLayer Layer
-      Definitions</title>
+    <title>Welcome to my test site!!
+
+    </title>
 
     <link rel="stylesheet"
           href="https://js.arcgis.com/3.26/esri/css/esri.css"/>
@@ -23,7 +24,8 @@
     <script src="https://js.arcgis.com/3.26/"></script>
     <script>
       var map;
-
+      var dMss;
+      var dynamicMapServiceLayer;
       require([
         "esri/map",
         "esri/layers/ArcGISDynamicMapServiceLayer",
@@ -56,12 +58,10 @@
          // imageParameters.transparent = true;
 
           //construct ArcGISDynamicMapServiceLayer with imageParameters from above
-          var dMss = new ArcGISDynamicMapServiceLayer("https://arcgis.cityofcapegirardeau.org:6443/arcgis/rest/services/Meter_Routes/MapServer"
+          dMss = new ArcGISDynamicMapServiceLayer("https://arcgis.cityofcapegirardeau.org:6443/arcgis/rest/services/Meter_Routes/MapServer"
             );
 
-          //map.addLayer(dynamicMapServiceLayer);
-
-          var dynamicMapServiceLayer = new ArcGISDynamicMapServiceLayer("https://arcgis.cityofcapegirardeau.org:6443/arcgis/rest/services/Water_System/MapServer"
+          dynamicMapServiceLayer = new ArcGISDynamicMapServiceLayer("https://arcgis.cityofcapegirardeau.org:6443/arcgis/rest/services/Water_System/MapServer"
             );
 
           map.addLayer(dynamicMapServiceLayer);
